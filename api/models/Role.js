@@ -1,6 +1,6 @@
 
 module.exports = (sequelize, DataTypes, Sequelize) => {
-  const Role = sequelize.define('Role', {
+  const Role = sequelize.define('role', {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
       type: DataTypes.STRING,
     },
   }, {
-    freezeTableName: true,
+    freezeTableName: true
   })
 
   Role.associate = (models) => {
-    models.Role.hasMany(models.Users)
+    models.role.hasMany(models.user)
   }
 
   return Role

@@ -6,7 +6,8 @@ const createFirmSchema = Joi.object({
   password: Joi.string().min(6).required().error(new ErrorResponse('Wrong credential', 401)),
   lastName: Joi.string().allow('').optional(),
   firstName: Joi.string().allow('').optional(),
-  role: Joi.number().allow('').optional()
+  roleId: Joi.number().allow('').optional(),
+  organizationId: Joi.number().allow('').optional()
 })
 
 const userValidation = asyncHandler(async (req, res, next) => {

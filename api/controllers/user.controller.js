@@ -1,4 +1,4 @@
-const { loginService, registerService } = require('../services/auth.service')
+const { getAllUsersService } = require('../services/user.service')
 const asyncHandler = require('../middleware/async');
 
 
@@ -6,9 +6,6 @@ const asyncHandler = require('../middleware/async');
 // @route     GET /api/user/getUsers
 // @access    Public
 exports.getUserController = asyncHandler(async (req, res, next) => {
-
-
-
-  let object = await getUsersService(req.body)
-  res.status(200).json(res.advancedResults);
+  let object = await getAllUsersService(req.body)
+  res.status(200).json(object);
 });

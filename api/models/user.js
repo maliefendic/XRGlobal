@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const randomize = require('randomatic');
 
 module.exports = (sequelize, DataTypes, Sequelize) => {
-  const Users = sequelize.define(
-    'Users',
+  const User = sequelize.define(
+    'user',
     {
       id: {
         autoIncrement: true,
@@ -47,8 +47,15 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
       isActive: {
         defaultValue: true,
         type: DataTypes.BOOLEAN
+      },
+      roleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      organizationId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
       }
-
     },
     {
       freezeTableName: true
@@ -56,20 +63,20 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
     }
   )
   // associations
-  Users.associate = (models) => {
-    models.Users.belongsTo(models.Role)
-    models.Users.belongsTo(models.Organization)
+  User.associate = (models) => {
+    models.user.belongsTo(models.role, { foreignKey: 'roleId' })
+    models.user.belongsTo(models.organization)
 
   }
 
-  Users.addHook('beforeCreate', async (user) => {
+  User.addHook('beforeCreate', async (user) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
   });
 
 
   // Generate email confirm token
-  Users.generateEmailConfirmToken = function (next) {
+  User.generateEmailConfirmToken = function (next) {
     // email confirmation token
     const confirmationToken = crypto.randomBytes(20).toString('hex');
 
@@ -84,16 +91,17 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
   };
 
   // Sign JWT and return
-  Users.prototype.getSignedJwtToken = function () {
-    return jwt.sign({ id: this._previousDataValues.id }, process.env.JWT_SECRET, {
+  User.prototype.getSignedJwtToken = function () {
+    const payload = { id: this.id, role: this.roleId, organizationId: this.organizationId, email: this.email }
+    return jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRE,
     });
   };
 
   // Match user entered password to hashed password in database
-  Users.prototype.matchPassword = async function (enteredPassword) {
+  User.prototype.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this._previousDataValues.password);
   };
-  return Users
+  return User
 
 }

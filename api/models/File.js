@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes, Sequelize) => {
-  const File = sequelize.define('File', {
+  const File = sequelize.define('file', {
     id: {
       primaryKey: true,
       type: DataTypes.INTEGER,
@@ -21,12 +21,12 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
     },
 
   }, {
-    freezeTableName: true,
+    freezeTableName: true
+
   })
   // associations
   File.associate = (models) => {
-    models.File.hasMany(models.Organization)
-    models.File.hasMany(models.TypeFile)
+    models.file.belongsTo(models.organization)
   }
   return File
 }

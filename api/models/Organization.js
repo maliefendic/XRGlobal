@@ -2,7 +2,7 @@
 
 module.exports = (sequelize, DataTypes, Sequelize) => {
   const Organization = sequelize.define(
-    'Organization',
+    'organization',
     {
       id: {
         primaryKey: true,
@@ -42,14 +42,14 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
 
     },
     {
-      freezeTableName: true,
+      freezeTableName: true
     }
   )
 
   // associations
   Organization.associate = (models) => {
-    models.Organization.hasMany(models.Users)
-    models.Organization.belongsTo(models.File)
+    models.organization.hasMany(models.user)
+    models.organization.hasMany(models.file)
 
   }
   return Organization

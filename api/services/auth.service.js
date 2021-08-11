@@ -1,13 +1,12 @@
 const db = require('../models')
 const ErrorResponse = require('../utils/errorResponse');
 const { Op } = db.Sequelize
-const { Users } = db
 
 async function loginService(body) {
   const { email, password } = body;
 
   // Check for user
-  const user = await Users.findOne({ where: { email } });
+  const user = await db.user.findOne({ where: { email } });
 
   if (!user) { throw new ErrorResponse('Invalid credentials', 401); }
 
@@ -20,8 +19,8 @@ async function loginService(body) {
 
 
 async function registerService(body) {
-  const { lastName, firstName, email, password, role } = body;
-  const user = await db.Users.create({ firstName, lastName, email, password, role })
+  const { lastName, firstName, email, password, roleId, organizationId } = body;
+  const user = await db.user.create({ firstName, lastName, email, password, roleId, organizationId })
   return generateToken(user, 200);
 }
 
