@@ -48,8 +48,8 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
 
   // associations
   Organization.associate = (models) => {
-    models.organization.hasMany(models.user)
-    models.organization.hasMany(models.file)
+    models.organization.hasMany(models.user, { as: 'user' })
+    models.organization.hasMany(models.file, { as: 'file' })
 
   }
   return Organization
