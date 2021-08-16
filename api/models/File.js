@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
       type: DataTypes.STRING
     },
 
-    url: {
+    bucket_name: {
       allowNull: false,
       type: DataTypes.STRING
     },

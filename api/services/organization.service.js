@@ -3,22 +3,18 @@ const _ = require("lodash");
 const ErrorResponse = require('../utils/errorResponse');
 const { Op } = db.Sequelize
 
-async function getAllUsersService(params) {
+async function getAllOrganizationsService(params) {
 
   const { pageSize, page, orderBy, orderType, search, select } = params;
   const { limit, offset } = getPagination(page, pageSize)
-  const userFilters = searchInModels(db.user, ["firstName", "lastName", "email"], search, "user");
-  //const organizationFilters = searchInModels(db.organization, ["businessName"], search, "organization")
-  const organizationFilters = multipleSelectInModels(db.organization, select, "organization")
+  //const userFilters = searchInModels(db.user, ["firstName", "lastName", "email"], search, "user");
+  const organizationFilters = searchInModels(db.organization, ["businessName"], search, "organization")
+  //  const organizationFilters = multipleSelectInModels(db.organization, select, "organization")
   console.log(userFilters)
-  const data = await db.user.findAndCountAll({
+  const data = await db.organization.findAndCountAll({
     where: {
-      [Op.or]: { ...userFilters },
-      [Op.and]: { ...organizationFilters }
+      [Op.or]: { ...organizationFilters }
     },
-    include: [{
-      model: db.organization
-    }],
     offset,
     limit,
     order: [[orderBy, orderType]],
@@ -27,10 +23,10 @@ async function getAllUsersService(params) {
   return getPagingData(data, page, limit)
 
 }
-async function getAllUserService(params) {
+async function getOrganizationService(params) {
 
   const { id } = params;
-  const data = await db.user.findOne({
+  const data = await db.organization.findOne({
     where: {
       id
     },
@@ -41,18 +37,18 @@ async function getAllUserService(params) {
 
 }
 
-async function deleteUserService(params) {
+async function deleteOrganizationService(params) {
 
   const { id } = params;
-  const data = await db.user.findByPk(id)
+  const data = await db.organization.findByPk(id)
   await data.destroy();
   return "Deleted"
 
 }
 
-async function createUserService(body) {
-  const { lastName, firstName, email, password, roleId, organizationId } = body;
-  const data = await db.user.create({ firstName, lastName, email, password, roleId, organizationId })
+async function createOrganizationService(body) {
+  const { businessName, logo, address, city, zip, country, phone, website, isActive } = body;
+  const data = await db.organization.create({ businessName, logo, address, city, zip, country, phone, website, isActive })
   return data
 }
 
@@ -105,5 +101,5 @@ const getPagingData = (data, page, limit) => {
 }
 
 module.exports = {
-  getAllUsersService, getAllUserService, deleteUserService, createUserService
+  getOrganizationService, getAllOrganizationsService, deleteOrganizationService, createOrganizationService
 }

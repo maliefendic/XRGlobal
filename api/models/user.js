@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const randomize = require('randomatic');
-
+const db = require('./')
 module.exports = (sequelize, DataTypes, Sequelize) => {
   const User = sequelize.define(
     'user',
@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
+        /*   get() {
+             const id_h = this.getDataValue('id');
+             return crypto.createHash('sha1').update(id_h.toString()).digest('hex')
+           }*/
       },
       firstName: {
         type: DataTypes.STRING
@@ -91,8 +95,9 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
   };
 
   // Sign JWT and return
-  User.prototype.getSignedJwtToken = function () {
-    const payload = { id: this.id, role: this.roleId, organizationId: this.organizationId, email: this.email }
+  User.prototype.getSignedJwtToken = async function () {
+    const role = await sequelize.models.role.findByPk(1)
+    const payload = { id: this.id, role: role.role, organizationId: this.organizationId, email: this.email }
     return jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRE,
     });

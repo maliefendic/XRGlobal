@@ -14,21 +14,21 @@ async function loginService(body) {
   const isMatch = await user.matchPassword(password);
   if (!isMatch) { throw ErrorResponse('Invalid credentials', 401); }
 
-  return generateToken(user, 200);
+  return await generateToken(user, 200);
 }
 
 
 async function registerService(body) {
   const { lastName, firstName, email, password, roleId, organizationId } = body;
   const user = await db.user.create({ firstName, lastName, email, password, roleId, organizationId })
-  return generateToken(user, 200);
+  return await generateToken(user, 200);
 }
 
 
 // Get token from model, create cookie and send response
-const generateToken = (user, statusCode) => {
+const generateToken = async (user, statusCode) => {
   // Create token
-  const token = user.getSignedJwtToken();
+  const token = await user.getSignedJwtToken();
 
   const options = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000,),
