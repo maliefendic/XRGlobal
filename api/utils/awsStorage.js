@@ -1,5 +1,4 @@
 const awsSdk = require('aws-sdk')
-
 const { S3 } = awsSdk
 
 const storage = new S3({
@@ -23,7 +22,12 @@ const uploadFiles = async (files, bucketName, destinationFolderPrefix, isPublic)
       const params = {
         Bucket: bucketName,
         Key: `${destinationFolderPrefix}/${name}`,
-        Body: buffer
+        Body: buffer,
+        Tagging: 'Version=3',
+        Metadata: {
+          "metadata1": "value1",
+          "metadata2": "value2"
+        }
       }
       isPublic && (params.ACL = 'public-read')
       storage.upload(params).promise().then(() => resolve(true)).catch((err) => reject(err))
@@ -42,14 +46,24 @@ const uploadFiles = async (files, bucketName, destinationFolderPrefix, isPublic)
  * @description - Download public files from google cloud storage
  */
 
-const downloadPublicFiles = async (files, bucketName, originFolderPrefix) => {
-  const promises = []
-  files.map((file) => ({ Bucket: bucketName, Key: `${originFolderPrefix}/${file.name}` })).map(
-    (params) => promises.push(storage.getObject(params).promise())
-  )
+const downloadPublicFiles = async (name, bucketName, originFolderPrefix) => {
+  const params = { Bucket: bucketName, Key: `${originFolderPrefix}/${name}` }
+  const fileBuffers = await storage.getObject(params).createReadStream()
+  return fileBuffers
+}
 
-  const fileBuffers = await Promise.all(promises)
-  console.log(fileBuffers)
+const downloadPublicFilesVersion = async (name, bucketName, originFolderPrefix, versionId) => {
+  const params = { Bucket: bucketName, Key: `${originFolderPrefix}/${name}`, VersionId: versionId }
+  const fileBuffers = await storage.getObject(params).createReadStream()
+  return fileBuffers
+}
+
+const listObjectVersion = async (bucketName, destinationFolderPrefix, name) => {
+  let params = {
+    Bucket: bucketName,
+    Prefix: destinationFolderPrefix + "/" + name,
+  };
+  let fileBuffers = await storage.listObjectVersions(params).promise()
   return fileBuffers
 }
 
@@ -57,5 +71,6 @@ const aws = {}
 aws.storage = storage
 aws.uploadFiles = uploadFiles
 aws.downloadPublicFiles = downloadPublicFiles
-
+aws.listObjectVersion = listObjectVersion
+aws.downloadPublicFilesVersion = downloadPublicFilesVersion
 module.exports = aws

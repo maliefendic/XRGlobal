@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
     {
       id: {
         primaryKey: true,
+        autoIncrement: true,
         type: DataTypes.INTEGER,
       },
 
@@ -34,7 +35,9 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
       website: {
         type: DataTypes.STRING
       },
-
+      destinationFolder: {
+        type: DataTypes.STRING
+      },
       isActive: {
         defaultValue: true,
         type: DataTypes.BOOLEAN

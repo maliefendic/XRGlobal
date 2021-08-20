@@ -3,23 +3,17 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
     id: {
       primaryKey: true,
       type: DataTypes.INTEGER,
+      autoIncrement: true,
     },
 
     name: {
       allowNull: false,
       type: DataTypes.STRING
     },
-
-    bucket_name: {
+    url: {
       allowNull: false,
       type: DataTypes.STRING
-    },
-
-    type: {
-      allowNull: false,
-      type: DataTypes.INTEGER
-    },
-
+    }
   }, {
     freezeTableName: true
 

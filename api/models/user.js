@@ -96,7 +96,7 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
 
   // Sign JWT and return
   User.prototype.getSignedJwtToken = async function () {
-    const role = await sequelize.models.role.findByPk(1)
+    const role = await sequelize.models.role.findByPk(this.roleId)
     const payload = { id: this.id, role: role.role, organizationId: this.organizationId, email: this.email }
     return jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRE,
@@ -105,7 +105,8 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
 
   // Match user entered password to hashed password in database
   User.prototype.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this._previousDataValues.password);
+    console.log(this.password)
+    return await bcrypt.compare(enteredPassword, this.password);
   };
   return User
 

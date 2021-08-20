@@ -3,7 +3,7 @@ const ErrorResponse = require('../../utils/errorResponse');
 const asyncHandler = require('../async');
 const createFirmSchema = Joi.object({
   email: Joi.string().email({ tlds: { allow: false } }).error(new ErrorResponse('Wrong credential', 401)),
-  password: Joi.string().min(6).required().error(new ErrorResponse('Wrong credential', 401)),
+  password: Joi.string().min(3).required().error(new ErrorResponse('Wrong credential', 401)),
   lastName: Joi.string().allow('').optional(),
   firstName: Joi.string().allow('').optional(),
   roleId: Joi.number().allow('').optional(),

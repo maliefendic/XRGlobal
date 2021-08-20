@@ -3,7 +3,7 @@ const user = require('../controllers/user.controller')
 const auth = require('../middleware/auth')
 const { userValidation, getUserValidation, userIdValidation } = require('../middleware/validation/user.validation')
 module.exports = (app) => {
-  router.post('/', auth(['admin']), user.createUserController)
+  router.post('/', user.createUserController)
   router.get('/', getUserValidation, auth(['admin']), user.getUsersController)
   router.get('/:id', userIdValidation, user.getUserController)
   router.delete('/:id', userIdValidation, auth({}), user.deleteUserController)

@@ -3,8 +3,10 @@ module.exports = (sequelize, DataTypes, Sequelize) => {
   const Role = sequelize.define('role', {
     id: {
       allowNull: false,
+      autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER,
+
     },
     role: {
       type: DataTypes.STRING,

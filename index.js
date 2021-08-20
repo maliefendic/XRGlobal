@@ -3,6 +3,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 const { sequelize } = require('./api/models');
 const errorHandler = require('./api/middleware/error');
+const fileUpload = require('express-fileupload')
 require('dotenv').config()
 
 const app = express()
@@ -18,11 +19,12 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 app.use(express.json());
-
-
+app.use(express.urlencoded({ extended: true }))
+app.use(fileUpload())
 require('./api/routes')(app)
 app.use(morgan('dev'));
 app.use(errorHandler);
+
 const port = process.env.PORT || 3000
 app.listen(port, async () => {
   // await init()

@@ -1,4 +1,5 @@
 const db = require('../models')
+const moment = require('moment')
 const _ = require("lodash");
 const ErrorResponse = require('../utils/errorResponse');
 const { Op } = db.Sequelize
@@ -49,6 +50,8 @@ async function deleteOrganizationService(params) {
 async function createOrganizationService(body) {
   const { businessName, logo, address, city, zip, country, phone, website, isActive } = body;
   const data = await db.organization.create({ businessName, logo, address, city, zip, country, phone, website, isActive })
+  data.destinationFolder = data.businessName.split(" ")[0] + data.id + "-" + moment(data.createdAt).format('DD-MM-YYYY-h-mm-ss');
+  data.save()
   return data
 }
 
@@ -101,5 +104,8 @@ const getPagingData = (data, page, limit) => {
 }
 
 module.exports = {
-  getOrganizationService, getAllOrganizationsService, deleteOrganizationService, createOrganizationService
+  getOrganizationService,
+  getAllOrganizationsService,
+  deleteOrganizationService,
+  createOrganizationService
 }

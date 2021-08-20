@@ -1,4 +1,4 @@
-const { getOrganizationController, getAllOrganizationService, deleteOrganizationController, createOrganizationController } = require('../services/user.service')
+const { getOrganizationController, getAllOrganizationService, deleteOrganizationController, createOrganizationService } = require('../services/organization.service')
 const asyncHandler = require('../middleware/async');
 
 
