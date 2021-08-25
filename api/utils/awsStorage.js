@@ -18,16 +18,13 @@ const storage = new S3({
 const uploadFiles = async (files, bucketName, destinationFolderPrefix, isPublic) => {
   const promises = files.map(
     (file) => new Promise((resolve, reject) => {
-      const { name, buffer } = file
+      const { name, buffer, version } = file
       const params = {
         Bucket: bucketName,
         Key: `${destinationFolderPrefix}/${name}`,
         Body: buffer,
-        Tagging: 'Version=3',
-        Metadata: {
-          "metadata1": "value1",
-          "metadata2": "value2"
-        }
+        Tagging: `Version=${version}`,
+
       }
       isPublic && (params.ACL = 'public-read')
       storage.upload(params).promise().then(() => resolve(true)).catch((err) => reject(err))
@@ -67,10 +64,37 @@ const listObjectVersion = async (bucketName, destinationFolderPrefix, name) => {
   return fileBuffers
 }
 
+const getFilesTagging = async (bucketName, originFolderPrefix, name, versionId) => {
+  const params = { Bucket: bucketName, Key: `${originFolderPrefix}/${name}`, VersionId: versionId }
+  const fileBuffers = await storage.getObjectTagging(params).promise()
+  return fileBuffers
+}
+
+const changeObjectTag = async (bucketName, originFolderPrefix, name, versionId, version) => {
+  const params = {
+    Bucket: bucketName,
+    Key: `${originFolderPrefix}/${name}`,
+    VersionId: versionId,
+    Tagging: {
+      TagSet: [
+        {
+          Key: 'Version',
+          Value: version
+        }
+      ]
+    },
+  }
+  const fileBuffers = await storage.putObjectTagging(params).promise()
+
+  return fileBuffers
+}
+
 const aws = {}
 aws.storage = storage
 aws.uploadFiles = uploadFiles
 aws.downloadPublicFiles = downloadPublicFiles
 aws.listObjectVersion = listObjectVersion
 aws.downloadPublicFilesVersion = downloadPublicFilesVersion
+aws.getFilesTagging = getFilesTagging
+aws.changeObjectTag = changeObjectTag
 module.exports = aws
