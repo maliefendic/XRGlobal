@@ -6,7 +6,7 @@ const asyncHandler = require('../middleware/async');
 // @route     POST /api/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
-  let object = await loginService(req.body)
+  let object = await loginService(req.body, req.user.roleId)
   sendTokenResponse(object, res)
 });
 

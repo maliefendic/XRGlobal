@@ -2,12 +2,18 @@ const db = require('../models')
 const ErrorResponse = require('../utils/errorResponse');
 const { Op } = db.Sequelize
 
-async function loginService(body) {
+const { USERTYPE } = require('../utils/types')
+
+async function loginService(body, roleId) {
   const { email, password } = body;
+
+   if(roleId==USERTYPE.branch){
+
+    
+   }
 
   // Check for user
   const user = await db.user.findOne({ where: { email } });
-
   if (!user) { throw new ErrorResponse('Invalid credentials', 401); }
 
   // Check if password matches
